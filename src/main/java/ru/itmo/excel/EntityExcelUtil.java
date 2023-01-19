@@ -18,13 +18,13 @@ public class EntityExcelUtil {
         Employee employee = new Employee();
         for(int c = 0; c < lastCol; c++) {
             cell = row.getCell(c);
-            if(cell == null) {
-                return null;
-            }
             switch (c){
                 //id
                 case 0:{
                     try {
+                        if(cell == null) {
+                            return null;
+                        }
                         double id = cell.getNumericCellValue();
                         if(id<0 || id%1 != 0){
                             return null;
@@ -39,6 +39,9 @@ public class EntityExcelUtil {
                 //name
                 case 1:{
                     try {
+                        if(cell == null) {
+                            return null;
+                        }
                         String name = cell.getStringCellValue();
                         if (name.equals("")){
                             return null;
@@ -54,6 +57,9 @@ public class EntityExcelUtil {
                 //lastName
                 case 2:{
                     try {
+                        if(cell == null) {
+                            return null;
+                        }
                         String lastName = cell.getStringCellValue();
                         if (lastName.equals("")){
                             return null;
@@ -68,6 +74,10 @@ public class EntityExcelUtil {
                 //birthday
                 case 3:{
                     try {
+                        if(cell == null) {
+                            employee.setBirthday(null);
+                            break;
+                        }
                         LocalDate birthday = cell.getDateCellValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                         LocalDate today = LocalDate.now();
                         long fullYears = ChronoUnit.YEARS.between(birthday, today);
@@ -84,6 +94,10 @@ public class EntityExcelUtil {
                 //company
                 case 4:{
                     try {
+                        if(cell == null) {
+                            employee.setCompany(null);
+                            break;
+                        }
                         String company = cell.getStringCellValue();
                         employee.setCompany(company);
                     }
@@ -95,6 +109,10 @@ public class EntityExcelUtil {
                 //positionAtWork
                 case 5:{
                     try {
+                        if(cell == null) {
+                            employee.setPositionAtWork(null);
+                            break;
+                        }
                         String positionAtWork = cell.getStringCellValue();
                         employee.setPositionAtWork(positionAtWork);
                     }
@@ -106,6 +124,10 @@ public class EntityExcelUtil {
                 //salary
                 case 6:{
                     try {
+                        if(cell == null) {
+                            employee.setSalary(0);
+                            break;
+                        }
                         float salary = (float) cell.getNumericCellValue();
                         if(salary< MROT){
                             return null;
