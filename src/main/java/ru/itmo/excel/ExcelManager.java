@@ -4,8 +4,12 @@ import lombok.Cleanup;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import ru.itmo.dao.CompanyDao;
 import ru.itmo.dao.EmployeeDao;
-import ru.itmo.entity.Employee;
+import ru.itmo.dao.PositionDao;
+import ru.itmo.entity.Company;
+import ru.itmo.entity.EmployeePOJO;
+import ru.itmo.entity.Position;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,8 +20,10 @@ import static ru.itmo.excel.EntityExcelUtil.tryGetEmployeeFromExcel;
 
 public class ExcelManager {
     private static EmployeeDao employeeDao = new EmployeeDao();
+    private static CompanyDao companyDao = new CompanyDao();
+    private static PositionDao positionDao = new PositionDao();
 
-    public static Map<Integer, Employee> getEmployees(String path, int sheetIdx, int fromRow, int toRow) throws IOException {
+    public static Map<Integer, EmployeePOJO> getEmployees(String path, int sheetIdx, int fromRow, int toRow) throws IOException {
         File myFile = new File(path);
         @Cleanup
         FileInputStream fis = new FileInputStream(myFile);
@@ -28,16 +34,16 @@ public class ExcelManager {
 
     }
 
-    private static Map<Integer, Employee> readData(XSSFSheet sheet, int fromRow, int toRow) {
+    private static Map<Integer, EmployeePOJO> readData(XSSFSheet sheet, int fromRow, int toRow) {
         XSSFRow row;
-        Map<Integer, Employee> result = new HashMap<>();
+        Map<Integer, EmployeePOJO> result = new HashMap<>();
 
         for(int r = fromRow; r < toRow; r++) {
             row = sheet.getRow(r);
             if(row == null) {
                 break; //!ATTENTION must be NO EMPTY rows between useful information
             }
-            Employee entity = (Employee) tryCreate(row, result); // disposable, change if needed
+            EmployeePOJO entity = (EmployeePOJO) tryCreate(row, result); // disposable, change if needed
             if (entity == null){
                 continue;
             }
@@ -76,8 +82,12 @@ public class ExcelManager {
 //        XSSFSheet sheet = workbook.getSheetAt(0);
 //        System.out.println("ssss");
 //
-        Map<Integer, Employee> employees = getEmployees("test.xlsx", 0, 1, 6);
-        employeeDao.save( employees.get(1));
+        Map<Integer, EmployeePOJO> employees = getEmployees("test.xlsx", 0, 1, 6);
+//        employeeDao.save( employees.get(1));
+//        Company luck = new Company("Luck");
+//        companyDao.save(luck);
+//        companyDao.getCompanyById(1);
+//        positionDao.save(new Position("dlkjhg", luck));
         System.out.println("la");
     }
 

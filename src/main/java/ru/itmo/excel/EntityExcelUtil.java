@@ -2,7 +2,7 @@ package ru.itmo.excel;
 
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
-import ru.itmo.entity.Employee;
+import ru.itmo.entity.EmployeePOJO;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -12,10 +12,10 @@ public class EntityExcelUtil {
     private static final float MROT = 16242;
 
     // try means null if not valid
-    public static Employee tryGetEmployeeFromExcel(XSSFRow row ){
-        int lastCol = Employee.class.getDeclaredFields().length;
+    public static EmployeePOJO tryGetEmployeeFromExcel(XSSFRow row ){
+        int lastCol = EmployeePOJO.class.getDeclaredFields().length;
         XSSFCell cell;
-        Employee employee = new Employee();
+        EmployeePOJO employee = new EmployeePOJO();
         for(int c = 0; c < lastCol; c++) {
             cell = row.getCell(c);
             if(cell == null) {

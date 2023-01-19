@@ -2,21 +2,20 @@ package ru.itmo.dao;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.exception.ConstraintViolationException;
 import ru.itmo.entity.Employee;
+import ru.itmo.entity.Position;
 import ru.itmo.utils.HibernateSessionFactoryUtil;
 
 import javax.persistence.PersistenceException;
 
-public class EmployeeDao {
+public class PositionDao {
 
-    public void save(Employee employee) {
+    public void save(Position position) {
         try(Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession()) {
             Transaction tx1 = session.beginTransaction();
-            session.save(employee);
+            session.save(position);
             tx1.commit();
         }catch (PersistenceException e){
-            System.out.println("Not unique id"); //todo
             e.printStackTrace();
         }
     }

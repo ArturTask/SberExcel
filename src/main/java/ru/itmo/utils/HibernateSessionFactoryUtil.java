@@ -1,6 +1,7 @@
 package ru.itmo.utils;
 
 
+import javafx.geometry.Pos;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
@@ -15,14 +16,12 @@ public class HibernateSessionFactoryUtil {
         public static SessionFactory getSessionFactory() {
             if (sessionFactory == null) {
                 try {
-//                    String confFile = "/Users/artur/Desktop/JavaSchoolProject/BackJavaSchool/src/main/resources/hibernate.cfg.xml";
-//                    File f = new File(confFile);
                     Configuration configuration = new Configuration().configure();
-//                    configuration.addAnnotatedClass(User.class);
                     configuration.addAnnotatedClass(Employee.class);
+                    configuration.addAnnotatedClass(Company.class);
+                    configuration.addAnnotatedClass(Position.class);
                     StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());
                     sessionFactory = configuration.buildSessionFactory(builder.build());
-//                    sessionFactory = configuration.buildSessionFactory();
 
 
 
