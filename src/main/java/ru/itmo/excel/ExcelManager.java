@@ -8,10 +8,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import ru.itmo.dao.CompanyDao;
 import ru.itmo.dao.EmployeeDao;
 import ru.itmo.dao.PositionDao;
-import ru.itmo.entity.Company;
-import ru.itmo.entity.Employee;
 import ru.itmo.entity.EmployeePOJO;
-import ru.itmo.entity.Position;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -21,9 +18,6 @@ import java.util.*;
 import static ru.itmo.excel.EntityExcelUtil.tryGetEmployeeFromExcel;
 
 public class ExcelManager {
-    private static EmployeeDao employeeDao = new EmployeeDao();
-    private static CompanyDao companyDao = new CompanyDao();
-    private static PositionDao positionDao = new PositionDao();
     private static XSSFWorkbook workbook;
 
 
@@ -155,25 +149,15 @@ public class ExcelManager {
 
 
     //debug
-    public static void main(String[] args) throws IOException, InterruptedException {
-
-        String path = "test.xlsx";
-        File myFile = new File(path);
-        @Cleanup
-        FileInputStream fis = new FileInputStream(myFile);
-        XSSFWorkbook workbook = new XSSFWorkbook (fis);
-        XSSFSheet sheet = workbook.getSheetAt(0);
-
-        System.out.println("ssss");
-//        Map<Integer, EmployeePOJO> employees = getEmployees("test.xlsx", 0, 1, 6);
-//        Company luck = new Company();
-//        Position some = new Position("IT smth", luck);
-//        luck.setCompanyName("LUCK");
-//        HashSet<Position> positions = new HashSet<>();
-//        positions.add(some);
-//        luck.setPositions(positions);
-//        companyDao.save(luck);
-//        System.out.println("la");
-    }
+//    public static void main(String[] args) throws IOException, InterruptedException {
+//
+//        String path = "test.xlsx";
+//        File myFile = new File(path);
+//        @Cleanup
+//        FileInputStream fis = new FileInputStream(myFile);
+//        XSSFWorkbook workbook = new XSSFWorkbook (fis);
+//        XSSFSheet sheet = workbook.getSheetAt(0);
+//
+//    }
 
 }
