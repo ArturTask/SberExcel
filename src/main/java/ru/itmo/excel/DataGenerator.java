@@ -7,7 +7,11 @@ import ru.itmo.entity.Company;
 import ru.itmo.entity.EmployeePOJO;
 import ru.itmo.entity.Position;
 
+import java.io.IOException;
+import java.time.LocalDate;
 import java.util.*;
+
+import static ru.itmo.excel.ExcelManager.postEmployees;
 
 public class DataGenerator {
 
@@ -24,6 +28,12 @@ public class DataGenerator {
             "Николай", "Константин", "Адам", "Валерий", "Григорий", "Валентин", "Павел", "Глеб", "Евгений", "Василий", "Семён", "Марат", "Осип", "Арсений", "Борис", "Егор", "Никита", "Мирон", "Михаил",
             "Александр", "Кирилл", "Степан", "Андрей", "Захар", "Никита", "Иван", "Леонид", "Виктор", "Георгий", "Лука", "Макар", "Ярослав", "Артём", "Даниил", "Дмитрий", "Валентин", "Адриан", "Назар", "Эрик",
     };
+    private static final String[] LAST_NAMES = new String []{"Acker", "Agnello", "Alinsky", "Aphelion", "Bartley", "Bixby", "Bobusic", "Bonneville", "Botkin", "Brager", "Brubaker", "Burris", "Butterworth", "Ajax",
+            "Berrycloth", "Birdwhistle", "Bread", "Bythesea", "Dankworth", "Edevane", "Fensby", "Gastrell", "Loughty", "MacQuoid", "Miracle", "Pussmaid", "Relish", "Sallow", "Slora", "Spinster", "Villin", "Abreo", "Agnor", "Alvin", "Auclair",
+            "Anouilh", "Bain", "Barrere", "Bassett", "Beauregard", "Brassard", "Brierman", "Cellier", "Dardar", "De", "Ebersol", "Ekker", "Escoffier", "Etter", "Fawzi", "Fisk", "Flammia", "Floquet", "Fonua", "Fukushima", "Furyk", "Freed", "Fontana",
+            "Gaumond", "Hanlon", "Houde", "Hubert", "Jessup", "Joubert", "Lafitte", "Machal", "Mangiarotti", "Ozanne", "Palomer", "Paquet", "Prevost", "Tasse", "Varville", "Bardot", "Bellamy", "Blaine", "Cassidy", "Caparasso", "Channing", "Cienfuegos",
+            "Dracula", "Escarra", "Falaguerra", "Gow", "Gushiken", "Heroux", "Homa", "Igarashi", "Ingannamorte", "Jurado", "La", "Lenoir", "Madigan", "Malfatto", "Martel", "Methadonna", "Pelagatti", "Proulx", "Rossingol", "Seisdedos", "Varon", "Voland",
+            "Webster", "Villalobos"};
 
     private static final String[] COMPANIES = new String[]{"Вторжение", "Проклятие", "Под водой", "Просто помиловать", "(Не)идеальный мужчина", "Плохие парни навсегда", "Марафон желаний", "Ярды", "1917",
             "Кома", "Герой СамСам", "Остров фантазий", "Джентльмены", "Лёд 2", "Зов предков", "Соник в кино", "Яга. Кошмар тёмного ", "Вперёд", "Человек-невидимка", "Отель Белград", "Один вдох", "Побег из Претории",
@@ -44,9 +54,32 @@ public class DataGenerator {
             "Шантажист", "Щипач", "Шулер", "Колхозник", "Дипломат", "Дипломатический работник", "Кинолог", "Организатор свадеб", "Переводчик", "Промышленный альпинист", "Безработный", "Сапёр", "Связист", "Секретчик", "Старшина", "Стрелок", "Снайпер", "Танкист", "Техник", "Топограф",
             "Тыловик", "Фельдшер", "Финансист", "Фортификатор", "Фуражир", "Химик", "Шифровальщик", "Штурман"};
 
-//    private static  List<EmployeePOJO> generateEmployees(){
-//
-//    }
+    private static  List<EmployeePOJO> generateEmployees(int quantity){
+        List<EmployeePOJO> employees = new LinkedList<>();
+        for(int i=0; i< quantity; i++){
+            employees.add(generateEmployee(i));
+        }
+        return employees;
+    }
+
+    private static EmployeePOJO generateEmployee(int idx){
+
+        EmployeePOJO employee = new EmployeePOJO();
+        if (Math.random()<0.95){
+            employee.setId(idx);
+        }
+        else { // 5% fault
+            employee.setId(idx+1);
+        }
+        employee.setName(NAMES[(int) (Math.random()*NAMES.length)]);
+        employee.setLastName(LAST_NAMES[(int) (Math.random()*LAST_NAMES.length)]);
+        employee.setBirthday(LocalDate.now().minusYears((long) (Math.random()* 100)).minusWeeks((long) (Math.random()*20)));
+        employee.setCompany(COMPANIES[(int) (Math.random()*COMPANIES.length)]);
+        employee.setPositionAtWork(POSITIONS[(int) (Math.random()*POSITIONS.length)]);
+        employee.setSalary((float) (Math.random()*1000000));
+        return employee;
+
+    }
 
     private static List<Company> generateCompanies(int companyQuantity, int positionQuantity){
         List<Company> companies = new LinkedList<>();
@@ -91,15 +124,23 @@ public class DataGenerator {
 
     public static void main(String[] args) {
 
-//        List<Company> companies = generateCompanies(6, 10);
-//        companies.forEach(company -> companyDao.save(company));
-
+        generateAndSaveCompanies(10, 20);
+        generateAndSaveEmployees("test.xlsx", 0, 100000);
 
     }
 
-    public static void generateAndSaveCompanies(){
-        List<Company> companies = generateCompanies(6, 10);
+    public static void generateAndSaveCompanies(int companyQuantity, int positionQuantity){
+        List<Company> companies = generateCompanies(companyQuantity, positionQuantity);
         companies.forEach(company -> companyDao.save(company));
+    }
+
+    public static void generateAndSaveEmployees(String path, int sheetIdx, int quantity){
+        List<EmployeePOJO> employeePOJOS = generateEmployees(quantity);
+        try {
+            postEmployees(path, sheetIdx, employeePOJOS);
+        } catch (IOException e) {
+            System.out.println("Ошибка в модуле DataGenerator при сохранении сотрудников");
+        }
     }
 
 

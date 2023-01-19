@@ -13,10 +13,7 @@ import ru.itmo.entity.Employee;
 import ru.itmo.entity.EmployeePOJO;
 import ru.itmo.entity.Position;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.time.ZoneId;
 import java.util.*;
 
@@ -46,6 +43,7 @@ public class ExcelManager {
         XSSFWorkbook workbook = new XSSFWorkbook (fis);
         XSSFSheet sheet = workbook.getSheetAt(sheetIdx);
         writeData(sheet, employees);
+        workbook.write(new FileOutputStream(path));
 
     }
 
@@ -74,6 +72,9 @@ public class ExcelManager {
 
         for(int r = 0; r < employees.size(); r++) {
             row = sheet.getRow(r);
+            if (row==null){
+                row = sheet.createRow(r);
+            }
             writeEmployeeToExcel(row, employees.get(r));
         }
 
@@ -83,6 +84,9 @@ public class ExcelManager {
 
         for (int i =0; i< Employee.class.getDeclaredFields().length; i++){
             XSSFCell cell = row.getCell(i);
+            if (cell == null){
+                cell = row.createCell(i);
+            }
             switch (i){
                 //id
                 case 0:{
