@@ -1,12 +1,15 @@
 package ru.itmo.entity;
 
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @Table(name = "company")
 @Entity
@@ -18,14 +21,14 @@ public class Company {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
 
     @Column(name = "company_name", unique = true)
     private String companyName;
 
-    @OneToMany(mappedBy="company", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy="company",cascade =CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Position> positions;
 
 

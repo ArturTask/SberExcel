@@ -1,6 +1,7 @@
 package ru.itmo.excel;
 
 import lombok.Cleanup;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -8,12 +9,15 @@ import ru.itmo.dao.CompanyDao;
 import ru.itmo.dao.EmployeeDao;
 import ru.itmo.dao.PositionDao;
 import ru.itmo.entity.Company;
+import ru.itmo.entity.Employee;
 import ru.itmo.entity.EmployeePOJO;
 import ru.itmo.entity.Position;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.ZoneId;
 import java.util.*;
 
 import static ru.itmo.excel.EntityExcelUtil.tryGetEmployeeFromExcel;
@@ -34,6 +38,17 @@ public class ExcelManager {
 
     }
 
+    public static void postEmployees(String path, int sheetIdx, List<EmployeePOJO> employees) throws IOException {
+
+        File myFile = new File(path);
+        @Cleanup
+        FileInputStream fis = new FileInputStream(myFile);
+        XSSFWorkbook workbook = new XSSFWorkbook (fis);
+        XSSFSheet sheet = workbook.getSheetAt(sheetIdx);
+        writeData(sheet, employees);
+
+    }
+
     private static Map<Integer, EmployeePOJO> readData(XSSFSheet sheet, int fromRow, int toRow) {
         XSSFRow row;
         Map<Integer, EmployeePOJO> result = new HashMap<>();
@@ -51,6 +66,61 @@ public class ExcelManager {
 
         }
         return result;
+    }
+
+    private static void writeData(XSSFSheet sheet, List<EmployeePOJO> employees) {
+        XSSFRow row;
+
+
+        for(int r = 0; r < employees.size(); r++) {
+            row = sheet.getRow(r);
+            writeEmployeeToExcel(row, employees.get(r));
+        }
+
+    }
+
+    private static void writeEmployeeToExcel(XSSFRow row, EmployeePOJO employee){
+
+        for (int i =0; i< Employee.class.getDeclaredFields().length; i++){
+            XSSFCell cell = row.getCell(i);
+            switch (i){
+                //id
+                case 0:{
+                    cell.setCellValue(employee.getId());
+                    break;
+                }
+                //name
+                case 1:{
+                    cell.setCellValue(employee.getName());
+                    break;
+                }
+                //lastName
+                case 2:{
+                    cell.setCellValue(employee.getLastName());
+                    break;
+                }
+                //birthday
+                case 3:{
+                    cell.setCellValue(Date.from(employee.getBirthday().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+                    break;
+                }
+                //company
+                case 4:{
+                    cell.setCellValue(employee.getCompany());
+                    break;
+                }
+                //positionAtWork
+                case 5:{
+                    cell.setCellValue(employee.getPositionAtWork());
+                    break;
+                }
+                //salary
+                case 6:{
+                    cell.setCellValue(employee.getSalary());
+                    break;
+                }
+            }
+        }
     }
 
     // try means null if not valid
@@ -81,13 +151,14 @@ public class ExcelManager {
 //        XSSFWorkbook workbook = new XSSFWorkbook (fis);
 //        XSSFSheet sheet = workbook.getSheetAt(0);
 //        System.out.println("ssss");
-//
         Map<Integer, EmployeePOJO> employees = getEmployees("test.xlsx", 0, 1, 6);
-//        employeeDao.save( employees.get(1));
-//        Company luck = new Company("Luck");
-//        companyDao.save(luck);
-//        companyDao.getCompanyById(1);
-//        positionDao.save(new Position("dlkjhg", luck));
+        Company luck = new Company();
+        Position some = new Position("IT smth", luck);
+        luck.setCompanyName("LUCK");
+        HashSet<Position> positions = new HashSet<>();
+        positions.add(some);
+        luck.setPositions(positions);
+        companyDao.save(luck);
         System.out.println("la");
     }
 
