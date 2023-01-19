@@ -15,7 +15,6 @@ create table employee (
     name text NOT NULL,
     last_name text NOT NULL,
     birthday date,
-    company_id INTEGER REFERENCES company,
     position_at_work INTEGER REFERENCES position,
     salary FLOAT
 );
