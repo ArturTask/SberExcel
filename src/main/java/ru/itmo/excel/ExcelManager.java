@@ -14,6 +14,7 @@ import ru.itmo.entity.EmployeePOJO;
 import ru.itmo.entity.Position;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.util.*;
 
@@ -23,12 +24,16 @@ public class ExcelManager {
     private static EmployeeDao employeeDao = new EmployeeDao();
     private static CompanyDao companyDao = new CompanyDao();
     private static PositionDao positionDao = new PositionDao();
+    private static XSSFWorkbook workbook;
+
 
     public static Map<Integer, EmployeePOJO> getEmployees(String path, int sheetIdx, int fromRow, int toRow) throws IOException {
         File myFile = new File(path);
         @Cleanup
         FileInputStream fis = new FileInputStream(myFile);
-        XSSFWorkbook workbook = new XSSFWorkbook (fis);
+        if (workbook==null) {
+            workbook = new XSSFWorkbook(fis);
+        }
         XSSFSheet sheet = workbook.getSheetAt(sheetIdx);
 
         return readData(sheet, fromRow, toRow);
@@ -36,14 +41,19 @@ public class ExcelManager {
     }
 
     public static void postEmployees(String path, int sheetIdx, List<EmployeePOJO> employees) throws IOException {
-
+        System.out.println("Opening excel - "+ new SimpleDateFormat("HH:mm:ss").format(new Date()));
         File myFile = new File(path);
         @Cleanup
         FileInputStream fis = new FileInputStream(myFile);
-        XSSFWorkbook workbook = new XSSFWorkbook (fis);
+        if (workbook==null) {
+            workbook = new XSSFWorkbook(fis);
+        }
         XSSFSheet sheet = workbook.getSheetAt(sheetIdx);
+        System.out.println("Opened excel, writing data... - "+ new SimpleDateFormat("HH:mm:ss").format(new Date()));
         writeData(sheet, employees);
+        System.out.println("Saving... - "+ new SimpleDateFormat("HH:mm:ss").format(new Date()));
         workbook.write(new FileOutputStream(path));
+
 
     }
 
@@ -68,8 +78,6 @@ public class ExcelManager {
 
     private static void writeData(XSSFSheet sheet, List<EmployeePOJO> employees) {
         XSSFRow row;
-
-
         for(int r = 0; r < employees.size(); r++) {
             row = sheet.getRow(r);
             if (row==null){
@@ -82,7 +90,7 @@ public class ExcelManager {
 
     private static void writeEmployeeToExcel(XSSFRow row, EmployeePOJO employee){
 
-        for (int i =0; i< Employee.class.getDeclaredFields().length; i++){
+        for (int i =0; i< EmployeePOJO.class.getDeclaredFields().length; i++){
             XSSFCell cell = row.getCell(i);
             if (cell == null){
                 cell = row.createCell(i);
@@ -147,23 +155,25 @@ public class ExcelManager {
 
 
     //debug
-    public static void main(String[] args) throws IOException {
-//        String path = "test.xlsx";
-//        File myFile = new File(path);
-//        @Cleanup
-//        FileInputStream fis = new FileInputStream(myFile);
-//        XSSFWorkbook workbook = new XSSFWorkbook (fis);
-//        XSSFSheet sheet = workbook.getSheetAt(0);
-//        System.out.println("ssss");
-        Map<Integer, EmployeePOJO> employees = getEmployees("test.xlsx", 0, 1, 6);
-        Company luck = new Company();
-        Position some = new Position("IT smth", luck);
-        luck.setCompanyName("LUCK");
-        HashSet<Position> positions = new HashSet<>();
-        positions.add(some);
-        luck.setPositions(positions);
-        companyDao.save(luck);
-        System.out.println("la");
+    public static void main(String[] args) throws IOException, InterruptedException {
+
+        String path = "test.xlsx";
+        File myFile = new File(path);
+        @Cleanup
+        FileInputStream fis = new FileInputStream(myFile);
+        XSSFWorkbook workbook = new XSSFWorkbook (fis);
+        XSSFSheet sheet = workbook.getSheetAt(0);
+
+        System.out.println("ssss");
+//        Map<Integer, EmployeePOJO> employees = getEmployees("test.xlsx", 0, 1, 6);
+//        Company luck = new Company();
+//        Position some = new Position("IT smth", luck);
+//        luck.setCompanyName("LUCK");
+//        HashSet<Position> positions = new HashSet<>();
+//        positions.add(some);
+//        luck.setPositions(positions);
+//        companyDao.save(luck);
+//        System.out.println("la");
     }
 
 }

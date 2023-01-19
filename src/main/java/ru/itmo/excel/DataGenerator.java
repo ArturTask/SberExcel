@@ -8,6 +8,8 @@ import ru.itmo.entity.EmployeePOJO;
 import ru.itmo.entity.Position;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -44,8 +46,8 @@ public class DataGenerator {
             "Менеджер", "Мерчандайзер", "Метрдотель", "Няня", "Оператор коллцентра", "Официант", "Парикмахер", "Портной", "Портье", "Почтальон", "Продавец", "Сиделка", "Сапожник", "Сомелье", "Телемастер", "Торседор",
             "Упаковщик", "Флорист", "Швейцар", "Дизайнер рекламы", "Каскадёр", "Кинодраматург", "Киномеханик", "Кинооператор", "Кинорежиссер", "Оператор кино и телевидения", "Постановщик трюков", "Продюсер", "Сценарист",
             "Критик", "Актёр", "Артист цирка", "Архитектор", "Балетмейстер", "Балерина", "Брейдер", "Вокалист", "Визажист", "Геймдизайнер", "Гитарист", "Гример", "Диджей", "Дизайнер", "Дирижёр", "Декоратор", "Журналист",
-            "Звукорежиссёр", "Златокузнец", "Изобретатель", "Иллюстратор", "Имиджмейкер", "Инженер", "Композитор", "Кондитер", "Мастер маникюра", "Мастер педикюра", "Манекенщица", "Модель", "Модельер", "Музыкант",
-            "Парфюмер", "Писатель", "Поэт", "Повар", "Программист", "Режиссёр", "Реставратор", "Скульптор", "Стилист", "Танцор", "Татуировщик", "Флорист", "Фотограф", "Фотомодель", "Хореограф", "Художник", "Ювелир", "Художник по свету",
+            "Звукорежиссёр", "Златокузнец", "Изобретатель", "Иллюстратор", "Имиджмейкер", "Инженер", "Композитор", "Кондитер", "Мастер педикюра", "Манекенщица", "Модель", "Модельер", "Музыкант",
+            "Парфюмер", "Писатель", "Поэт", "Повар", "Программист", "Режиссёр", "Реставратор", "Скульптор", "Стилист", "Танцор", "Татуировщик", "Фотограф", "Фотомодель", "Хореограф", "Художник", "Ювелир", "Художник по свету",
             "Артиллерист", "Авиационный техник", "Баталер", "Борт-инженер", "Борт-механик", "Борт-радист", "Борт-стрелок", "Военный дознаватель", "Военный переводчик", "Военный консультант", "Военно-полевой хирург", "Военный полицейский", "Военный прокурор", "Военный судья",
             "Военный юрист", "Водолаз", "Воспитатель", "Гренадер", "Горнострелок", "Гранатомётчик", "Десантник", "Диверсант", "Заряжающий", "Интендант", "Зенитчик", "Кавалерист", "Канонир", "Каптенармус", "Командир", "Комендант", "Корректировщик", "Лётчик", "Механик-Водитель",
             "Маркитант", "Мотострелок", "Морской пехотинец", "Наводчик орудия", "Начальник военного оркестра", "Начальник гаупвахты", "Начальник службы", "Начальник склада", "Начальник штаба", "Огнемётчик", "Особист", "Оператор вооружения", "Оператор РЛС", "Пограничник", "Подводник",
@@ -53,6 +55,33 @@ public class DataGenerator {
             "Контрабандист", "Коррупционер", "Медвежатник", "Мошенник", "Напёрсточник", "Наркоделец", "Пират", "Разбойник", "Рейдер", "Рекитёр", "Скотокрад", "Сутенёр", "Фальшивомонетчик", "Форточник", "Хакер", "Чёрный археолог", "Чёрный риэлтор", "Чёрный копатель", "Цеховик",
             "Шантажист", "Щипач", "Шулер", "Колхозник", "Дипломат", "Дипломатический работник", "Кинолог", "Организатор свадеб", "Переводчик", "Промышленный альпинист", "Безработный", "Сапёр", "Связист", "Секретчик", "Старшина", "Стрелок", "Снайпер", "Танкист", "Техник", "Топограф",
             "Тыловик", "Фельдшер", "Финансист", "Фортификатор", "Фуражир", "Химик", "Шифровальщик", "Штурман"};
+
+
+    public static void main(String[] args) {
+
+        generateAndSaveCompanies(10, 20);
+        System.out.println("Generating employees it may take a little...");
+        generateAndSaveEmployees("test.xlsx", 0, 50000);
+        List<Company> allCompanies = companyDao.getAllCompanies();
+        System.out.println();
+
+    }
+
+    public static void generateAndSaveCompanies(int companyQuantity, int positionQuantity){
+        List<Company> companies = generateCompanies(companyQuantity, positionQuantity);
+        companies.forEach(company -> companyDao.save(company));
+    }
+
+    public static void generateAndSaveEmployees(String path, int sheetIdx, int quantity){
+        List<EmployeePOJO> employeePOJOS = generateEmployees(quantity);
+        System.out.println("Finished Generating - " + new SimpleDateFormat("HH:mm:ss").format(new Date())) ;
+        try {
+            postEmployees(path, sheetIdx, employeePOJOS);
+            System.out.println("Finished successfully - "+ new SimpleDateFormat("HH:mm:ss").format(new Date()));
+        } catch (IOException e) {
+            System.out.println("Ошибка в модуле DataGenerator при сохранении сотрудников");
+        }
+    }
 
     private static  List<EmployeePOJO> generateEmployees(int quantity){
         List<EmployeePOJO> employees = new LinkedList<>();
@@ -107,9 +136,12 @@ public class DataGenerator {
     private static Set<Position> generatePositions(int positionQuantity, int averageLen, int idxOfCompany, List<String> initialPositions, Company currCompany){
         positionQuantity = countRandQuantity(positionQuantity);
         int begin = idxOfCompany * averageLen; // searching from
-        int end = Math.min((idxOfCompany+1) * averageLen - 1, initialPositions.size()); // to
+        int end = Math.min((idxOfCompany+1) * averageLen - 1, initialPositions.size() - 1); // to
         Set<Position> positions = new HashSet<>();
         for (int i=0; i< positionQuantity; i++){
+            if (begin+i > end){
+                break;
+            }
             positions.add(new Position(initialPositions.get(begin + i), currCompany));
         }
         return positions;
@@ -121,27 +153,6 @@ public class DataGenerator {
         return initialQuantity + difference;
     }
 
-
-    public static void main(String[] args) {
-
-        generateAndSaveCompanies(10, 20);
-        generateAndSaveEmployees("test.xlsx", 0, 100000);
-
-    }
-
-    public static void generateAndSaveCompanies(int companyQuantity, int positionQuantity){
-        List<Company> companies = generateCompanies(companyQuantity, positionQuantity);
-        companies.forEach(company -> companyDao.save(company));
-    }
-
-    public static void generateAndSaveEmployees(String path, int sheetIdx, int quantity){
-        List<EmployeePOJO> employeePOJOS = generateEmployees(quantity);
-        try {
-            postEmployees(path, sheetIdx, employeePOJOS);
-        } catch (IOException e) {
-            System.out.println("Ошибка в модуле DataGenerator при сохранении сотрудников");
-        }
-    }
 
 
 }

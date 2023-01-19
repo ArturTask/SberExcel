@@ -7,6 +7,7 @@ import ru.itmo.entity.Position;
 import ru.itmo.utils.HibernateSessionFactoryUtil;
 
 import javax.persistence.PersistenceException;
+import java.util.List;
 
 public class CompanyDao {
 
@@ -18,6 +19,13 @@ public class CompanyDao {
         }catch (PersistenceException e){
             e.printStackTrace();
         }
+    }
+
+    public List<Company> getAllCompanies(){
+
+        List<Company> companies = (List<Company>)  HibernateSessionFactoryUtil.getSessionFactory().openSession().createQuery("From Company  ").list();
+        return companies;
+
     }
 
     public Company getCompanyById(int id){
