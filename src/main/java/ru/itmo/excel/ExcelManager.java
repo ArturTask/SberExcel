@@ -4,6 +4,7 @@ import lombok.Cleanup;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import ru.itmo.dao.EmployeeDao;
 import ru.itmo.entity.Employee;
 
 import java.io.File;
@@ -14,6 +15,7 @@ import java.util.*;
 import static ru.itmo.excel.EntityExcelUtil.tryGetEmployeeFromExcel;
 
 public class ExcelManager {
+    private static EmployeeDao employeeDao = new EmployeeDao();
 
     public static Map<Integer, Employee> getEmployees(String path, int sheetIdx, int fromRow, int toRow) throws IOException {
         File myFile = new File(path);
@@ -75,6 +77,7 @@ public class ExcelManager {
 //        System.out.println("ssss");
 //
         Map<Integer, Employee> employees = getEmployees("test.xlsx", 0, 1, 6);
+        employeeDao.save( employees.get(1));
         System.out.println("la");
     }
 
