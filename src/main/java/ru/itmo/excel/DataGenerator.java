@@ -16,9 +16,9 @@ import static ru.itmo.excel.ExcelManager.postEmployees;
 
 public class DataGenerator {
 
-    private static EmployeeDao employeeDao = new EmployeeDao();
+//    private static EmployeeDao employeeDao = new EmployeeDao();
     private static CompanyDao companyDao = new CompanyDao();
-    private static PositionDao positionDao = new PositionDao();
+//    private static PositionDao positionDao = new PositionDao();
 
     private static final float VARIATION_IN_PERCENT = 0.4f;
 
@@ -59,11 +59,8 @@ public class DataGenerator {
     public static void main(String[] args) {
 
         generateAndSaveCompanies(10, 20);
-        System.out.println("Generating employees it may take a little...");
-        generateAndSaveEmployees("test.xlsx", 0, 50000);
-        List<Company> allCompanies = companyDao.getAllCompanies();
-        System.out.println();
-
+//        System.out.println("Generating employees it may take a little...");
+//        generateAndSaveEmployees("test.xlsx", 0, 50000);
     }
 
     public static void generateAndSaveCompanies(int companyQuantity, int positionQuantity){

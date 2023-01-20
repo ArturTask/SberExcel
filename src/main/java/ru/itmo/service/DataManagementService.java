@@ -8,6 +8,8 @@ import ru.itmo.entity.Position;
 
 import javax.persistence.PersistenceException;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +25,10 @@ public class DataManagementService {
 
 
     public static void main(String[] args) {
+        System.out.println("Start - "+ new SimpleDateFormat("HH:mm:ss").format(new Date()));
         smartSaveAll(5);
+        System.out.println("End - "+ new SimpleDateFormat("HH:mm:ss").format(new Date()));
+
     }
 
     private static void smartSaveAll(int divisionNumber){
@@ -67,6 +72,17 @@ public class DataManagementService {
                 return new Employee(employeePOJO.getId(), employeePOJO.getName(), employeePOJO.getLastName(), employeePOJO.getBirthday(), position, employeePOJO.getSalary());
             }
         }
+        return null;
+
+    }
+
+    // do not use!!! Performance goes down 10 times
+    private static Employee tryParseUsingBD(EmployeePOJO employeePOJO) {
+        Position position = positionDao.tryFindPositionAndCompany(employeePOJO.getPositionAtWork(), employeePOJO.getCompany());
+        if (position!=null) {
+            return new Employee(employeePOJO.getId(), employeePOJO.getName(), employeePOJO.getLastName(), employeePOJO.getBirthday(), position, employeePOJO.getSalary());
+        }
+
         return null;
 
     }

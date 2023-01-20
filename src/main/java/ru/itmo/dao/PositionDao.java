@@ -1,5 +1,6 @@
 package ru.itmo.dao;
 
+import javafx.geometry.Pos;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import ru.itmo.entity.Company;
@@ -28,4 +29,15 @@ public class PositionDao {
         return positions;
 
     }
+
+    public Position tryFindPositionAndCompany(String positionName, String companyName){
+
+        List<Object[]> positionAndCompany =  HibernateSessionFactoryUtil.getSessionFactory().openSession().createQuery("From Position as position join Company as company on position.company = company.id where position.positionName='" + positionName +  "' and company.companyName = '" + companyName + "'").list();
+        if (positionAndCompany.size()==0){
+            return null;
+        }
+        return (Position) positionAndCompany.get(0)[0];
+
+    }
+
 }
