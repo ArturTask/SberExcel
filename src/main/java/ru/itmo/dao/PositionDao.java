@@ -1,10 +1,7 @@
 package ru.itmo.dao;
 
-import javafx.geometry.Pos;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import ru.itmo.entity.Company;
-import ru.itmo.entity.Employee;
 import ru.itmo.entity.Position;
 import ru.itmo.utils.HibernateSessionFactoryUtil;
 

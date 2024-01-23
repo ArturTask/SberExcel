@@ -1,11 +1,12 @@
 package ru.itmo.utils;
 
 
-import javafx.geometry.Pos;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
-import ru.itmo.entity.*;
+import ru.itmo.entity.Company;
+import ru.itmo.entity.Employee;
+import ru.itmo.entity.Position;
 
 
 public class HibernateSessionFactoryUtil {

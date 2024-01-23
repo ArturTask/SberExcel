@@ -10,6 +10,7 @@ import javax.persistence.PersistenceException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,23 +33,35 @@ public class DataManagementService {
     }
 
     private static void smartSaveAll(int divisionNumber){
+
+        Map<Integer, EmployeePOJO> employees = getEmployeesPartially(divisionNumber);
+        saveAllEmployees(employees);
+    }
+
+    // todo rewrite using  batch insert!!! (without reopening session each time)
+    private static void saveAllEmployees(Map<Integer, EmployeePOJO> employees) {
+        employees.forEach((integer, employeePOJO) -> {
+            trySave(employeePOJO);
+        });
+    }
+
+    // not much sense in partial employees retrieving cause I save them by opening new session each time
+    // todo rewrite
+    private static Map<Integer, EmployeePOJO> getEmployeesPartially(int divisionNumber) {
         int averageQuantity = LAST_ROW / divisionNumber;
         int currentLastRow = averageQuantity;
 
+        Map<Integer, EmployeePOJO> employees = new HashMap<>();
         while (currentLastRow < LAST_ROW){
             try {
-                Map<Integer, EmployeePOJO> employees = getEmployees("test.xlsx", 0, currentLastRow - averageQuantity, currentLastRow);
-                employees.forEach((integer, employeePOJO) -> {
-                    trySave(employeePOJO);
-                });
+                employees = getEmployees("test.xlsx", 0, currentLastRow - averageQuantity, currentLastRow);
             } catch (IOException e) {
                 System.out.println("Excel Exception\n");
                 e.printStackTrace();
             }
             currentLastRow = Math.min(currentLastRow + averageQuantity, LAST_ROW);
-
-
         }
+        return employees;
     }
 
     private static void trySave(EmployeePOJO employeePOJO) {

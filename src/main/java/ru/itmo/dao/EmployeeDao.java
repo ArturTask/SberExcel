@@ -3,7 +3,6 @@ package ru.itmo.dao;
 import lombok.Cleanup;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.exception.ConstraintViolationException;
 import ru.itmo.entity.Employee;
 import ru.itmo.utils.HibernateSessionFactoryUtil;
 

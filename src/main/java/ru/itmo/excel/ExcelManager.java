@@ -5,15 +5,19 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import ru.itmo.dao.CompanyDao;
-import ru.itmo.dao.EmployeeDao;
-import ru.itmo.dao.PositionDao;
 import ru.itmo.entity.EmployeePOJO;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static ru.itmo.excel.EntityExcelUtil.tryGetEmployeeFromExcel;
 
@@ -22,10 +26,10 @@ public class ExcelManager {
 
 
     public static Map<Integer, EmployeePOJO> getEmployees(String path, int sheetIdx, int fromRow, int toRow) throws IOException {
-        File myFile = new File(path);
-        @Cleanup
-        FileInputStream fis = new FileInputStream(myFile);
         if (workbook==null) {
+            File myFile = new File(path);
+            @Cleanup
+            FileInputStream fis = new FileInputStream(myFile);
             workbook = new XSSFWorkbook(fis);
         }
         XSSFSheet sheet = workbook.getSheetAt(sheetIdx);
@@ -34,7 +38,7 @@ public class ExcelManager {
 
     }
 
-    public static void postEmployees(String path, int sheetIdx, List<EmployeePOJO> employees) throws IOException {
+    public static void saveEmployeesToExcel(String path, int sheetIdx, List<EmployeePOJO> employees) throws IOException {
         System.out.println("Opening excel - "+ new SimpleDateFormat("HH:mm:ss").format(new Date()));
         File myFile = new File(path);
         @Cleanup
@@ -46,7 +50,7 @@ public class ExcelManager {
         System.out.println("Opened excel, writing data... - "+ new SimpleDateFormat("HH:mm:ss").format(new Date()));
         writeData(sheet, employees);
         System.out.println("Saving... - "+ new SimpleDateFormat("HH:mm:ss").format(new Date()));
-        workbook.write(new FileOutputStream(path));
+        workbook.write(Files.newOutputStream(Paths.get(path)));
 
 
     }

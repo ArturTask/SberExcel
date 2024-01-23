@@ -1,8 +1,6 @@
 package ru.itmo.excel;
 
 import ru.itmo.dao.CompanyDao;
-import ru.itmo.dao.EmployeeDao;
-import ru.itmo.dao.PositionDao;
 import ru.itmo.entity.Company;
 import ru.itmo.entity.EmployeePOJO;
 import ru.itmo.entity.Position;
@@ -12,13 +10,11 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 
-import static ru.itmo.excel.ExcelManager.postEmployees;
+import static ru.itmo.excel.ExcelManager.saveEmployeesToExcel;
 
 public class DataGenerator {
 
-//    private static EmployeeDao employeeDao = new EmployeeDao();
     private static CompanyDao companyDao = new CompanyDao();
-//    private static PositionDao positionDao = new PositionDao();
 
     private static final float VARIATION_IN_PERCENT = 0.4f;
 
@@ -58,7 +54,7 @@ public class DataGenerator {
 
     public static void main(String[] args) {
 
-        generateAndSaveCompanies(10, 20);
+//        generateAndSaveCompanies(10, 20);
 //        System.out.println("Generating employees it may take a little...");
 //        generateAndSaveEmployees("test.xlsx", 0, 50000);
     }
@@ -72,7 +68,7 @@ public class DataGenerator {
         List<EmployeePOJO> employeePOJOS = generateEmployees(quantity);
         System.out.println("Finished Generating - " + new SimpleDateFormat("HH:mm:ss").format(new Date())) ;
         try {
-            postEmployees(path, sheetIdx, employeePOJOS);
+            saveEmployeesToExcel(path, sheetIdx, employeePOJOS);
             System.out.println("Finished successfully - "+ new SimpleDateFormat("HH:mm:ss").format(new Date()));
         } catch (IOException e) {
             System.out.println("Ошибка в модуле DataGenerator при сохранении сотрудников");
